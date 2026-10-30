@@ -115,6 +115,9 @@ footer p { margin: 0; }
   .about img { max-width: 13rem; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.cover.mo { position: relative; }
+.cover.mo > img { display: block; width: 100%; height: auto; }
+.cover.mo .fe { position: absolute; height: auto; transform-origin: 50% 10%; will-change: transform, opacity; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
 </style>
 </head>
 <body>
@@ -135,7 +138,7 @@ footer p { margin: 0; }
       <p class="from">The Blossoming of Truth novels, by Susan Gray</p>
     </div>
     <div class="inside">
-      <img class="cover" src="img/cover-ttt.jpg" alt="Then There’s Trust by Susan Gray: a painted view of Durham across a river in autumn" width="640" height="987">
+      <div class="cover mo" role="img" aria-label="Then There’s Trust by Susan Gray: a painted view of Durham across a river in autumn"><img src="img/ttt-plate.jpg" alt="" width="640" height="987"><img class="fe" src="img/feather.webp" alt="" style="left:74.28%;top:43.80%;width:7.72%"></div>
       <div class="copy">
         <h1>Then There’s Trust</h1>
         <p class="tag">Book three, set in 1950s northeast England.</p>
@@ -209,7 +212,14 @@ footer p { margin: 0; }
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function cl(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
   function ease(x) { return 1 - Math.pow(1 - x, 3); }
-  function draw(p) {
+    var fe = document.querySelector('.cover .fe');
+  function moment(p) {
+    var t = cl((p - .12) / .72), e = 1 - Math.pow(1 - t, 2), d = 1 - t;
+    var x = Math.sin(t * 9.5) * 260 * d - 120 * d, y = -1150 * (1 - e), r = Math.cos(t * 9.5) * 34 * d, s = 1 + 1.6 * d;
+    fe.style.opacity = cl(t * 6 + .001).toFixed(3);
+    fe.style.transform = 'translate3d(' + x.toFixed(1) + '%,' + y.toFixed(1) + '%,0) rotate(' + r.toFixed(2) + 'deg) scale(' + s.toFixed(3) + ')';
+  }
+  function draw(p) { moment(p);
     bg.style.transform = 'scale(' + (1 + .14 * p).toFixed(4) + ')';
     var o = cl(1 - p / .32);
     open.style.opacity = o.toFixed(3); open.style.transform = 'translate3d(0,' + (-p * 90).toFixed(1) + 'px,0)';
@@ -219,7 +229,7 @@ footer p { margin: 0; }
     var q = ease(cl((p - .5) / .3));
     copy.style.opacity = q.toFixed(3); copy.style.transform = 'translate3d(0,' + ((1 - q) * 28).toFixed(1) + 'px,0)';
   }
-  if (reduce) { document.documentElement.classList.remove('js'); hero.style.height = 'auto'; open.style.display = 'none'; return; }
+  if (reduce) { document.documentElement.classList.remove('js'); hero.style.height = 'auto'; open.style.display = 'none'; moment(1); return; }
   var ticking = false;
   function onScroll() {
     if (ticking) return; ticking = true;
